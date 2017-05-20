@@ -10,5 +10,9 @@ package AST;
  * @author matheus
  */
 public class Program {
+ 
+    public void genC(PW pw){
+        
+    }
     
 }

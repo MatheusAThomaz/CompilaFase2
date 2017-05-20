@@ -68,11 +68,13 @@ public class Lexer {
         while((c = input[tokenPos]) == ' ' || c == '\r'
                 || c == '\t' || c == '\n')
         {
+            
             if(c == '\n')
                 lineNumber++;
             tokenPos++;
+            
         }
-        
+        System.out.println(input[tokenPos]);
         if(c == '\0')
             token = Symbol.EOF;
         
