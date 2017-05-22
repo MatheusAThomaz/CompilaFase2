@@ -2,6 +2,9 @@
     Caio Henrique Giacomelli    620297
     Matheus Augusto Thomaz      620599
 */
+
+
+
 import AST.*;
 import java.io.*;
 
@@ -77,9 +80,11 @@ public class Main {
                 return ;
             }
             PrintWriter printWriter = new PrintWriter(outputStream);
+            PrintWriter outError = new PrintWriter(System.out);
+            
             program = null;
               // the generated code goes to a file and so are the errors
-            program  = compiler.compile(input );
+            program  = compiler.compile(input, outError);
             
             if ( program != null ) {
                PW pw = new PW();
@@ -89,6 +94,7 @@ public class Main {
                   System.out.println("There was an error in the output");
                }
             }
+            
         }
     }
 }

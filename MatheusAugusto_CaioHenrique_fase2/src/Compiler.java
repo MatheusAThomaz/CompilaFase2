@@ -4,6 +4,7 @@
 import Lexer.*;
 import AST.*;
 import java.util.*;
+import java.io.*;
 /**
  *
  * @author matheus
@@ -12,27 +13,30 @@ public class Compiler {
         
     private char []input;
     private String programName;
-    Lexer lexer;
+    private Lexer lexer;
+    private CompilerError error;
     
-        public Program compile( char []p_input  ) {
+        public Program compile(char []p_input, PrintWriter outError) {
         Program p;
         input = p_input;
         lexer = new Lexer(input);
         lexer.nextToken();
+        error = new CompilerError(outError);
+        error.setLexer(lexer);
         p = program();
         //Program result = program();
-        if (lexer.token != '\0' )
-          error();
+        if (lexer.token != Symbol.EOF)
+          error.signal("something goes wrong.", true);
         return p;
         }
         
         public Program program(){
             if (lexer.token == Symbol.PROGRAM){
                 lexer.nextToken();
-                
-                name();
                 programName = lexer.getStringValue();
+                error.setProgramName(programName);
                 
+                name();            
                 if (lexer.token == Symbol.COLON){
                     lexer.nextToken();
                     body();
@@ -42,14 +46,15 @@ public class Compiler {
                         lexer.nextToken();
                     }
                     else {
-                        error();
+                       error.signal("'end' expected.", false);
                     }
                 }
-                else error();
+                else error.signal("':' expected.", true);
             }         
-            else error();
+            else error.signal("'program' expected.", false);
             
-            return new Program();
+            Body body = null;         
+            return new Program(body, programName);
         }
         
         public void body(){
@@ -114,22 +119,21 @@ public class Compiler {
                                     }
                                     
                                     if (lexer.token == Symbol.RIGHTKEY) lexer.nextToken();
-                                    else error();
+                                    else error.signal("need to close curly brackets.", true);
                                 }
-                                else error();
+                                else error.signal("open curly brackets expected.", true);
                             }
-                            else error();
+                            else error.signal("need to close the parentheses.", false);
                         }
-                        else error();
+                        else error.signal("comma expected after the variable.", false);
                     }
-                    else error();
+                    else error.signal("open parentheses expected after inrange.", false);
                 }
                 else {
-                    error();
+                    error.signal("'inrange' expected after the variable.", false);
                 }    
                 
-            }
-            else error();        
+            }     
         }
         
         public void whileStmt(){
@@ -151,12 +155,11 @@ public class Compiler {
                     }
                     
                     if (lexer.token == Symbol.RIGHTKEY) lexer.nextToken();
-                    else error();
+                    else error.signal("need to close curly brackets.", true);
                     
                 }
-                else error();
+                else error.signal("open curly brackets expected.", true);
             }
-            else error();
             
             
             
@@ -164,6 +167,7 @@ public class Compiler {
         }
         
         public void ifStmt(){
+                       
             if (lexer.token == Symbol.IF){
                 lexer.nextToken();
                 
@@ -183,33 +187,32 @@ public class Compiler {
                     
                     if (lexer.token == Symbol.RIGHTKEY)
                         lexer.nextToken();
-                    else error();                                      
-                }
-                
-                else error();
+                    else error.signal("need to close curly brackets.", true);                                      
+                }                
+                else error.signal("open curly brackets expected.", true);
                 
                 if (lexer.token == Symbol.ELSE){
                     lexer.nextToken();
-                            if (lexer.token == Symbol.LEFTKEY){
-                                lexer.nextToken();
+                    if (lexer.token == Symbol.LEFTKEY){
+                        lexer.nextToken();
 
-                                while (lexer.token == Symbol.IF 
-                                       || lexer.token == Symbol.WHILE 
-                                       || lexer.token == Symbol.FOR 
-                                       || lexer.token == Symbol.VARSTRING 
-                                       || lexer.token == Symbol.PRINT
-                                       || lexer.token == Symbol.BREAK)
-                                {
-                                    stmt();
-                                }
-                                
-                                if (lexer.token == Symbol.RIGHTKEY) lexer.nextToken();
-                                else error();
-                            }
-                            else error();
-                        }  
+                        while (lexer.token == Symbol.IF 
+                               || lexer.token == Symbol.WHILE 
+                               || lexer.token == Symbol.FOR 
+                               || lexer.token == Symbol.VARSTRING 
+                               || lexer.token == Symbol.PRINT
+                               || lexer.token == Symbol.BREAK)
+                        {
+                            stmt();
+                        }
+
+                        if (lexer.token == Symbol.RIGHTKEY) lexer.nextToken();
+                        else error.signal("need to close curly brackets.", true);
+                    }
+                    else error.signal("open curly brackets expected.", true);
+                }
             }
-            else error();
+            
         }
         
         public void stmt(){
@@ -241,7 +244,7 @@ public class Compiler {
                 lexer.nextToken();
                 number();
                 if (lexer.token == Symbol.RIGHTCOLCHETE) lexer.nextToken();
-                else error();
+                else error.signal("']' expected.", false);
             }
             
             if (lexer.token == Symbol.ASSIGN){
@@ -253,7 +256,7 @@ public class Compiler {
                     exprList();
                     
                     if (lexer.token == Symbol.RIGHTCOLCHETE) lexer.nextToken();
-                    else error();
+                    else error.signal("']' expected.", false);
                 }
                 else{
                     orTest();
@@ -262,17 +265,16 @@ public class Compiler {
                 if (lexer.token == Symbol.SEMICOLON){
                     lexer.nextToken();
                 }
-                else error();
+                else error.signal("';' expected.", true);
             } 
-            else error();
+            else error.signal("'=' expected between expressions.", false);
             
             
         }
         
         public void printStmt(){
             
-            if(lexer.token == Symbol.PRINT)
-            {
+            if(lexer.token == Symbol.PRINT){
                 lexer.nextToken();
                 
                 orTest();
@@ -287,12 +289,9 @@ public class Compiler {
                 {
                     lexer.nextToken();
                 }
-                else
-                    error();
+                else error.signal("';' expected.", true);
                 
             }
-            else
-                error();
         }
         
         public void exprList(){
@@ -388,6 +387,7 @@ public class Compiler {
         }
         
         public void declaration(){
+           boolean flag = false; 
             
            type();
            idList();
@@ -397,22 +397,18 @@ public class Compiler {
                lexer.nextToken();
                if(lexer.token != Symbol.INT && lexer.token != Symbol.BOOLEAN
                && lexer.token != Symbol.FLOAT && lexer.token != Symbol.STRING)
-               {                  
+               {    
+                   flag = true;
                    break;
                }
                type();              
-               idList();
-               
+               idList();   
            }
                      
            if(lexer.token == Symbol.SEMICOLON ){
-                lexer.nextToken();
-                
+                lexer.nextToken();                
            }                             
-           else{
-            error();
-           }
-               
+           else if (!flag) error.signal("';' expected.", true);             
         }
         
         public void idList(){
@@ -425,8 +421,7 @@ public class Compiler {
                 number();
                 if(lexer.token == Symbol.RIGHTCOLCHETE)
                     lexer.nextToken();
-                else
-                    error();
+                else error.signal("']' expected.", false);
             }
             
             while(lexer.token == Symbol.COMMA)
@@ -440,8 +435,7 @@ public class Compiler {
                     number();
                     if(lexer.token == Symbol.RIGHTCOLCHETE)
                         lexer.nextToken();
-                    else
-                        error();
+                    else error.signal("']' expected.", false);
                 }
             }
         }
@@ -453,12 +447,9 @@ public class Compiler {
                 
                 if(lexer.token == Symbol.SEMICOLON)
                     lexer.nextToken();
-                else
-                    error();
+                else error.signal("';' expected.", true);
                 
             }
-            else 
-                error();
             
         }
         
@@ -479,20 +470,17 @@ public class Compiler {
                             name();
                             break;
                         default:
-                            error();
+                            error.signal("place a valid type.", false);
                             break;
                     }
                     
                     if(lexer.token != Symbol.RIGHTCOLCHETE)
                     {
-                        error();
-                        
+                        error.signal("']' expected.", false);
                     }
                     
                     lexer.nextToken();
                 }
-                else
-                   error();
             }
             else if(lexer.token == Symbol.NUMBERFLOAT || lexer.token == Symbol.NUMBERINT)
             {
@@ -511,7 +499,7 @@ public class Compiler {
                 lexer.nextToken();
             }
             else
-                error();          
+                error.signal("expected a number, variable or boolean type.", false);          
             
         }
         
@@ -522,14 +510,12 @@ public class Compiler {
                     lexer.nextToken();
             
             else
-                error();
+                error.signal("expected a operator.", false);
         }
         
         public void string(){
             if(lexer.token == Symbol.STRINGTEXT)
-                lexer.nextToken();
-            else
-                error();
+                lexer.nextToken();              
         }
         
         public void type(){           
@@ -537,7 +523,7 @@ public class Compiler {
                || lexer.token == Symbol.FLOAT || lexer.token == Symbol.STRING)
                 lexer.nextToken();
             else
-                error();
+                error.signal("expected a valid type", false);
             
         }
         
@@ -548,17 +534,12 @@ public class Compiler {
                 signal();        
             }
             if(lexer.token == Symbol.NUMBERFLOAT || lexer.token == Symbol.NUMBERINT)
-                digit();
-            else
-                error();
-            
+                digit();           
         }
         
         public void name(){
             if(lexer.token == Symbol.VARSTRING)
                 lexer.nextToken();
-            else
-                error();
         }
         
         public void digit(){
@@ -567,8 +548,6 @@ public class Compiler {
                 lexer.nextToken();
             else if(lexer.token == Symbol.NUMBERFLOAT)
                 lexer.nextToken();
-            else
-                error();
         }
         
         public void signal(){
@@ -580,13 +559,7 @@ public class Compiler {
                 lexer.nextToken();
             
             else
-                error();
+                error.signal("place a valid signal.", false);
         }
-                
-        
-        
-        public void error(){
-            
-        }
-                
+               
 }

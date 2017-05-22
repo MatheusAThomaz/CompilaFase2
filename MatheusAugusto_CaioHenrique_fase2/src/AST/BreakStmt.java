@@ -9,17 +9,10 @@ package AST;
  *
  * @author matheus
  */
-public class NumberFloat {
+public class BreakStmt implements Stmt {
     
-    private float value;
-    
-    public NumberFloat(float value){
-        this.value = value;
+    public void genC(PW pw)
+    {
+        pw.println("break;");
     }
-    
-    public void genC(PW pw){
-        pw.print("" + value);
-        
-    }
-    
 }

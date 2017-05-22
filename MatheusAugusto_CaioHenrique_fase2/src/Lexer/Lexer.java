@@ -16,6 +16,7 @@ public class Lexer {
     private int tokenPos;
     private int lineNumber;
     private int lastTokenPos;
+    private int beforeLastTokenPos;
     private char input[];
     
     private String StringValue;
@@ -29,6 +30,8 @@ public class Lexer {
         
         lineNumber = 1;
         tokenPos = 0;
+        lastTokenPos = 0;
+        beforeLastTokenPos = 0;
         
         // this.error = error;
     }
@@ -75,7 +78,7 @@ public class Lexer {
             tokenPos++;
             
         }
-        System.out.println(input[tokenPos]);
+        //System.out.println(input[tokenPos]);
         if(c == '\0')
             token = Symbol.EOF;
         
@@ -101,6 +104,7 @@ public class Lexer {
                     }
                     
                     StringValue = ident.toString();
+                    
                     Object value = keywordsTable.get(StringValue);
                     if (value == null){
                         token = Symbol.VARSTRING;
@@ -264,9 +268,36 @@ public class Lexer {
                 }
             }
         }
+        
+        beforeLastTokenPos = lastTokenPos;
+        lastTokenPos = tokenPos - 1;
     }
   
     public String getStringValue(){
         return StringValue;
     }
+    
+    public int getLineNumber(){
+        return lineNumber;
+    }
+    
+    public int getLineNumber(int index){
+        int i, n, size;
+        
+        n = 1;
+        i = 0;
+        size = input.length;
+
+        while ( i < size && i < index ) {
+            if ( input[i] == '\n' ) n++;
+            i++;
+        }
+        return n;
+    }
+    
+    public int getLineNumberBeforeLastToken() {
+        return getLineNumber( beforeLastTokenPos );
+    }
+    
+    
 }

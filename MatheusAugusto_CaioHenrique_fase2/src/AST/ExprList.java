@@ -9,16 +9,9 @@ package AST;
  *
  * @author matheus
  */
-public class NumberFloat {
-    
-    private float value;
-    
-    public NumberFloat(float value){
-        this.value = value;
-    }
+public class ExprList {
     
     public void genC(PW pw){
-        pw.print("" + value);
         
     }
     

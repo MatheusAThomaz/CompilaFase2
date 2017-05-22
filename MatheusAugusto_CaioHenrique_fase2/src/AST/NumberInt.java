@@ -17,6 +17,10 @@ public class NumberInt {
         this.value = value;
     }
     
+    public int getInt(){
+        return this.value;
+    }
+    
     public void genC(PW pw){
         pw.print(" " + value);
         

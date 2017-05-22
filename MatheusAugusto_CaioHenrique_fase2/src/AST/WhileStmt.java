@@ -9,29 +9,31 @@ import java.util.*;
  *
  * @author matheus
  */
-public class PrintStmt implements Stmt {
+public class WhileStmt implements Stmt {
     
-    private ArrayList<OrTest> orTest;
+    private ArrayList<Stmt> stmt;
+    private OrTest orTest;
     
-    public PrintStmt (ArrayList<OrTest> orTest){
-        this.orTest = orTest;
+    
+    public WhileStmt(OrTest orTest, ArrayList<Stmt> stmt)
+    {
+        this.stmt =stmt;
     }
     
     public void genC(PW pw)
     {
         int i = 0;
+        pw.print("while(");
         
-        orTest.get(i).genC(pw);
-        
-        i++;
-        
-        while(i < orTest.size())
+        orTest.genC(pw);
+        pw.print("){");
+        while(i < stmt.size())
         {
-            pw.print(",");
-            orTest.get(i).genC(pw);
+            stmt.get(i).genC(pw);
             i++;
         }
         
-        pw.println(";");
+        pw.print("}");
     }
+    
 }
