@@ -65,6 +65,7 @@ public class Lexer {
     public void nextToken(){
         char c;
         
+        
         while((c = input[tokenPos]) == ' ' || c == '\r'
                 || c == '\t' || c == '\n')
         {
@@ -163,14 +164,16 @@ public class Lexer {
                 else if (c == 39){
                     StringBuffer ident = new StringBuffer();
                     tokenPos++; 
-                    while (input[tokenPos] != 39 || input[tokenPos] != '\0'){
+                    while (input[tokenPos] != 39 && input[tokenPos] != '\0'){
+                        
                         ident.append(input[tokenPos]);
                         tokenPos++;
                     }
                     
                     if(input[tokenPos] == '\0')
-                        //error;
-                        
+                        System.out.println("erro");
+                    else tokenPos++;
+                    
                     StringValue = ident.toString();
                     token = Symbol.STRINGTEXT;
                     
@@ -261,5 +264,9 @@ public class Lexer {
                 }
             }
         }
+    }
+  
+    public String getStringValue(){
+        return StringValue;
     }
 }

@@ -9,10 +9,27 @@ package AST;
  *
  * @author matheus
  */
-public class Program {
+public class Program{
+    
+    private Body body;
+    private String name;
+    
+    public Program(Body body, String name)
+    {
+        this.body = body;
+        this.name = name;
+    }
  
     public void genC(PW pw){
+        pw.out.println("#include <stdio.h>");
+        pw.println("int main(){");
+        
+        body.genC(pw);
+        pw.println("return 0;");
+        pw.println("}");
         
     }
+    
+    
     
 }

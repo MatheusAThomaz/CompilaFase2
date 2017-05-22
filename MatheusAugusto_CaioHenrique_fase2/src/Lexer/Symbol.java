@@ -60,6 +60,7 @@ public class Symbol {
     COLON = 44,
     STRINGTEXT = 45,
     CIRCUMFLEX = 46,
+    VETOR = 47,
             //MUDAR ESSE 100, POR FAVOR, SENÃO É 0.
     LASTSYMBOL = 100;
 

@@ -1,4 +1,6 @@
 
+
+
 import Lexer.*;
 import AST.*;
 import java.util.*;
@@ -9,6 +11,7 @@ import java.util.*;
 public class Compiler {
         
     private char []input;
+    private String programName;
     Lexer lexer;
     
         public Program compile( char []p_input  ) {
@@ -28,13 +31,19 @@ public class Compiler {
                 lexer.nextToken();
                 
                 name();
+                programName = lexer.getStringValue();
+                
                 if (lexer.token == Symbol.COLON){
+                    lexer.nextToken();
                     body();
                     
                     if (lexer.token == Symbol.END){
+                        //System.out.println("É TETRAAAAAAAAA");
                         lexer.nextToken();
                     }
-                    else error();
+                    else {
+                        error();
+                    }
                 }
                 else error();
             }         
@@ -46,8 +55,8 @@ public class Compiler {
         public void body(){
             if(lexer.token == Symbol.INT || lexer.token == Symbol.BOOLEAN
                || lexer.token == Symbol.FLOAT || lexer.token == Symbol.STRING)
-            {
-                declaration();
+            {               
+                declaration();               
             }
             
             while (lexer.token == Symbol.IF 
@@ -92,7 +101,6 @@ public class Compiler {
                             
                             if (lexer.token == Symbol.RIGHTPAR){
                                 lexer.nextToken();
-                                
                                 if (lexer.token == Symbol.LEFTKEY){
                                     lexer.nextToken();
                                     while (lexer.token == Symbol.IF 
@@ -116,7 +124,10 @@ public class Compiler {
                     }
                     else error();
                 }
-                else error();    
+                else {
+                    error();
+                }    
+                
             }
             else error();        
         }
@@ -128,7 +139,7 @@ public class Compiler {
                 orTest();
             
                 if (lexer.token == Symbol.LEFTKEY){
-                    
+                    lexer.nextToken();
                     while (lexer.token == Symbol.IF 
                            || lexer.token == Symbol.WHILE 
                            || lexer.token == Symbol.FOR 
@@ -178,6 +189,7 @@ public class Compiler {
                 else error();
                 
                 if (lexer.token == Symbol.ELSE){
+                    lexer.nextToken();
                             if (lexer.token == Symbol.LEFTKEY){
                                 lexer.nextToken();
 
@@ -208,6 +220,7 @@ public class Compiler {
         }
         
         public void simpleStmt(){
+            
             switch (lexer.token) {
                 case Symbol.PRINT:
                     printStmt();
@@ -221,8 +234,7 @@ public class Compiler {
             }
         }      
         
-        public void exprStmt(){
-            
+        public void exprStmt(){           
             name();
             
             if (lexer.token == Symbol.LEFTCOLCHETE){
@@ -237,7 +249,9 @@ public class Compiler {
                 
                 if (lexer.token == Symbol.LEFTCOLCHETE){
                     lexer.nextToken();
+                    
                     exprList();
+                    
                     if (lexer.token == Symbol.RIGHTCOLCHETE) lexer.nextToken();
                     else error();
                 }
@@ -319,8 +333,9 @@ public class Compiler {
             if(lexer.token == Symbol.NOT)
             {
                 lexer.nextToken();
-                comparison();
             }
+            
+            comparison();
         }
         
         public void comparison(){
@@ -378,15 +393,26 @@ public class Compiler {
            idList();
            
            while(lexer.token == Symbol.SEMICOLON)
-           {
-                type();
-                idList();
-           }
-           
-           if(lexer.token == Symbol.SEMICOLON)
+           {   
                lexer.nextToken();
-           else
-               error();
+               if(lexer.token != Symbol.INT && lexer.token != Symbol.BOOLEAN
+               && lexer.token != Symbol.FLOAT && lexer.token != Symbol.STRING)
+               {                  
+                   break;
+               }
+               type();              
+               idList();
+               
+           }
+                     
+           if(lexer.token == Symbol.SEMICOLON ){
+                lexer.nextToken();
+                
+           }                             
+           else{
+            error();
+           }
+               
         }
         
         public void idList(){
@@ -405,8 +431,9 @@ public class Compiler {
             
             while(lexer.token == Symbol.COMMA)
             {
-                name();
+                lexer.nextToken();
                 
+                name();
                 if(lexer.token == Symbol.LEFTCOLCHETE)
                 {
                     lexer.nextToken();
