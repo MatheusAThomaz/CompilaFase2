@@ -9,7 +9,7 @@ import java.util.*;
  *
  * @author matheus
  */
-public class ForStmt {
+public class ForStmt implements Stmt {
     
     private Name name;
     private NumberInt number1;

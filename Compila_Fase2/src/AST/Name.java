@@ -9,7 +9,7 @@ package AST;
  *
  * @author matheus
  */
-public class Name {
+public class Name implements Variables{
     
     private String value;
     
@@ -17,6 +17,9 @@ public class Name {
         this.value = value;
     }
     
+    public String getName(){
+        return this.value;
+    }
     
     public void genC(PW pw)
     {

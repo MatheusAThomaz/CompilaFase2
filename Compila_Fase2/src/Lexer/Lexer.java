@@ -14,6 +14,7 @@ public class Lexer {
     
     public int token;
     private int tokenPos;
+    private int numberInt;
     private int lineNumber;
     private int lastTokenPos;
     private int beforeLastTokenPos;
@@ -133,6 +134,9 @@ public class Lexer {
                             number.append(input[tokenPos]);
                             tokenPos++;
                         }
+                        
+                        numberInt = Integer.valueOf(number.toString()).intValue();
+                        
                         
                         if (input[tokenPos] == ' ' || input[tokenPos] == '>'
                             || input[tokenPos]  == '<' || input[tokenPos]  == '='
@@ -279,6 +283,10 @@ public class Lexer {
     
     public int getLineNumber(){
         return lineNumber;
+    }
+    
+    public int getNumber(){
+        return numberInt;
     }
     
     public int getLineNumber(int index){

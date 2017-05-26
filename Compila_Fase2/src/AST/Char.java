@@ -7,22 +7,21 @@ package AST;
 
 /**
  *
- * @author matheus
+ * @author maiks
  */
-public class NumberInt implements Type, NumberInterface {
+public class Char implements Type {
     
-    private int value;
+    private char ch;
     
-    public NumberInt(int value){
-        this.value = value;
-    }
-    
-    public int getInt(){
-        return this.value;
+    public void Char(char ch){
+        
+        this.ch = ch;
+        
     }
     
     public void genC(PW pw){
-        pw.print(" " + value);
+        
+        pw.print("" + ch);
         
     }
     

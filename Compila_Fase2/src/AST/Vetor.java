@@ -11,7 +11,7 @@ import Lexer.Symbol;
  *
  * @author matheus
  */
-public class Vetor {
+public class Vetor implements Variables {
     
     private String name;
     private int indexI;

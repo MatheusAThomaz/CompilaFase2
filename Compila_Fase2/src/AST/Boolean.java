@@ -7,19 +7,23 @@ package AST;
 
 /**
  *
- * @author matheus
+ * @author maiks
  */
-public class NumberFloat  implements Type, NumberInterface{
+public class Boolean implements Type{
+     
+    private boolean bool;
     
-    private float value;
-    
-    public NumberFloat(float value){
-        this.value = value;
-    }
-    
-    public void genC(PW pw){
-        pw.print("" + value);
+    public void Boolean(boolean bool){
+        
+        this.bool = bool;
         
     }
     
+    public void genC(PW pw){
+        
+        if(bool)
+            pw.print("1");
+        else
+            pw.print("0");     
+    }
 }

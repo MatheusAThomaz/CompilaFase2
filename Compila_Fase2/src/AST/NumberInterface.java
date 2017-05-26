@@ -7,17 +7,10 @@ package AST;
 
 /**
  *
- * @author matheus
+ * @author maiks
  */
-public class StringVar implements Type {
+public interface NumberInterface {
+    public void genC(PW pw);
     
-    private String value;
     
-    public StringVar(String value){
-        this.value = value;
-    }
-    
-    public void genC(PW pw){
-        pw.print(value);
-    }
 }
