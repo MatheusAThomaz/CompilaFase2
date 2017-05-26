@@ -9,12 +9,20 @@ package AST;
  *
  * @author matheus
  */
-public class NumberFloat  implements Type, NumberInterface{
+public class NumberFloat  implements NumberInterface{
     
     private float value;
     
     public NumberFloat(float value){
         this.value = value;
+    }
+    
+    public float getValue(){
+        return value;
+    }
+    
+    public int getInt(){
+        return 0;
     }
     
     public void genC(PW pw){

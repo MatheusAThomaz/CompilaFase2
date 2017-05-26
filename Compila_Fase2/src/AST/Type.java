@@ -5,12 +5,28 @@
  */
 package AST;
 
+import Lexer.Symbol;
+
 /**
  *
  * @author maiks
  */
-public interface Type {
+public class Type {
+    int symb;
     
-    public abstract void genC(PW pw);
+    public Type(int type){
+        this.symb = type;
+    }
+    
+    public void genC(PW pw){
+        
+        switch (this.symb){
+            case Symbol.INT:
+                pw.print("int ");
+            
+        }
+        
+        
+    }
     
 }

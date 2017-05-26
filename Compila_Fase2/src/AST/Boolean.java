@@ -9,7 +9,7 @@ package AST;
  *
  * @author maiks
  */
-public class Boolean implements Type{
+public class Boolean{
      
     private boolean bool;
     

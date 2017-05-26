@@ -9,7 +9,7 @@ package AST;
  *
  * @author matheus
  */
-public class StringVar implements Type {
+public class StringVar{
     
     private String value;
     

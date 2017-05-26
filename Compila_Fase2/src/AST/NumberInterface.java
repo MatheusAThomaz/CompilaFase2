@@ -12,5 +12,8 @@ package AST;
 public interface NumberInterface {
     public void genC(PW pw);
     
+    public float getValue();
+    
+    public int getInt();
     
 }

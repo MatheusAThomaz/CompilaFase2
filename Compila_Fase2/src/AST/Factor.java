@@ -15,7 +15,7 @@ public class Factor {
     private Atom atom;
     private char signal;
     
-    public void Atom(char signal, Atom atom, ArrayList<Factor> factor){
+    public Factor(char signal, Atom atom, ArrayList<Factor> factor){
         this.signal = signal;
         this.factor = factor;
         this.atom = atom;

@@ -9,7 +9,7 @@ package AST;
  *
  * @author matheus
  */
-public class NumberInt implements Type, NumberInterface {
+public class NumberInt implements NumberInterface {
     
     private int value;
     
@@ -19,6 +19,11 @@ public class NumberInt implements Type, NumberInterface {
     
     public int getInt(){
         return this.value;
+    }
+    
+    public float getValue(){
+        //error;
+        return 0;
     }
     
     public void genC(PW pw){

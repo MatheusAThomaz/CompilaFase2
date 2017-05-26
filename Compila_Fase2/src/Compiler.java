@@ -456,38 +456,59 @@ public class Compiler {
         }
         
         public Expr expr(){
+            ArrayList<Term> term = new ArrayList<Term>();
+            char []signal = null;
+            int i = 0;
             
-            term();
+            term.add(term());
             
             while(lexer.token == Symbol.PLUS || lexer.token == Symbol.MINUS)
             {
+                if (lexer.token == Symbol.PLUS) signal[i] = '+';
+                else signal[i] = '-';
                 lexer.nextToken();
-                term();
+                term.add(term());
             }
+            
+            return new Expr(signal, term);
         }
         
-        public void term(){
-            
-            factor();
+        public Term term(){
+            ArrayList<Factor> fact = new ArrayList<Factor>();
+            char []signal = null;
+            int i = 0;
+                       
+            fact.add(factor());
             
             while(lexer.token == Symbol.MULT || lexer.token == Symbol.DIV)
             {
+                if (lexer.token == Symbol.MULT) signal[i] = '*';
+                else signal[i] = '/';
                 lexer.nextToken();
-                factor();
+                fact.add(factor());
             }
+            
+            return new Term(signal, fact);
         }
         
-        public void factor(){
+        public Factor factor(){
+            ArrayList<Factor> fact = new ArrayList<Factor>();
+            Atom atom = null;
+            char signal = ' ';
+            int i = 0;
             
             int tokenAnterior;
             
-            if(lexer.token == Symbol.MINUS || lexer.token == Symbol.PLUS)
+            if(lexer.token == Symbol.MINUS || lexer.token == Symbol.PLUS){
+                if (lexer.token == Symbol.PLUS) signal = '+';
+                else signal = '-';
                 lexer.nextToken();
+            }
+                
+                       
+            //tokenAnterior = lexer.token;
             
-            
-            tokenAnterior = lexer.token;
-            
-            atom();
+            atom = atom();
 
             if (lexer.token == Symbol.VARSTRING || lexer.token == Symbol.NUMBERFLOAT || lexer.token == Symbol.NUMBERINT){
                 error.signal("operator expected between variables", false);
@@ -496,8 +517,10 @@ public class Compiler {
             while(lexer.token == Symbol.CIRCUMFLEX)
             {
                 lexer.nextToken();
-                factor();
+                fact.add(factor());
             }
+            
+            return new Factor(signal, atom, fact);
         }
         
         public Declaration declaration(){
@@ -604,90 +627,149 @@ public class Compiler {
             return new BreakStmt();
         }
         
-        public void atom(){
+        public Atom atom(){
+            Name name = null;
+            Name indexS = null;
+            NumberInterface number;
+            String text = null;
+            int symb = 0;
+           
             
             if(lexer.token == Symbol.VARSTRING){
-                name();
+                name = name();
+                
                 if(lexer.token == Symbol.LEFTCOLCHETE)
                 {
                     lexer.nextToken();
                     
                     switch (lexer.token) {
                         case Symbol.NUMBERINT:
+                            number = number();
+                            
+                            
+                            if(lexer.token != Symbol.RIGHTCOLCHETE)
+                            {
+                                error.signal("']' expected.", false);
+                            }
+                            
+                            lexer.nextToken();
+                            
+                            return new Atom(Symbol.VETOR, name.getName(), number.getInt());
                         case Symbol.NUMBERFLOAT:
-                            number();
+                            //TRATAR ERRO SEMANTICO
                             break;
                         case Symbol.VARSTRING:
-                            name();
-                            break;
+                            indexS = name();
+                            
+                            if(lexer.token != Symbol.RIGHTCOLCHETE)
+                            {
+                                error.signal("']' expected.", false);
+                            }
+                            
+                            lexer.nextToken();
+                            
+                            return new Atom(Symbol.VETOR, name.getName(), indexS.getName());
                         default:
                             error.signal("place a valid type.", false);
                             break;
-                    }
-                    
-                    if(lexer.token != Symbol.RIGHTCOLCHETE)
-                    {
-                        error.signal("']' expected.", false);
-                    }
-                    
-                    lexer.nextToken();
+                    }                   
                 }
+                
+                return new Atom(Symbol.VARSTRING, name.getName());
             }
+            
             else if(lexer.token == Symbol.NUMBERFLOAT || lexer.token == Symbol.NUMBERINT)
             {
-                number();
+                symb = lexer.token;
+                number = number();
+                
+                if (symb == Symbol.NUMBERINT) return new Atom(symb, number.getInt());
+                else return new Atom(symb, number.getValue());
+                
             }
             else if(lexer.token == Symbol.STRINGTEXT)
             {
-                string();
+                text = string();
+                
+                return new Atom(Symbol.STRINGTEXT, text);
             }
+            
             else if(lexer.token == Symbol.TRUE)
             {
                 lexer.nextToken();
+                
+                return new Atom(Symbol.TRUE);
             }
             else if(lexer.token == Symbol.FALSE)
             {
                 lexer.nextToken();
+                
+                return new Atom(Symbol.FALSE);
             }
             else
-                error.signal("expected a number, variable or boolean type.", false);          
+                error.signal("expected a number, variable or boolean type.", false);
             
+            return null;          
         }
         
         public CompOp compOp(){
+            int symb = 0;
             if(lexer.token == Symbol.LOWER || lexer.token == Symbol.EQUAL
                || lexer.token == Symbol.LOWEREQUAL || lexer.token == Symbol.DIFERENT
                || lexer.token == Symbol.UPPER || lexer.token == Symbol.UPPEREQUAL)
-                    lexer.nextToken();
-            
+            {
+                symb = lexer.token;
+                lexer.nextToken();
+            }
+          
             else
                 error.signal("expected a operator.", false);
+        
+            return new CompOp(symb);
         }
         
-        public void string(){
-            if(lexer.token == Symbol.STRINGTEXT)
-                lexer.nextToken();              
+        public String string(){
+            String str = null;
+            if(lexer.token == Symbol.STRINGTEXT){
+                str = lexer.getStringValue();
+                lexer.nextToken();  
+            }
+            
+            return str;
         }
         
         public Type type(){           
             if(lexer.token == Symbol.INT || lexer.token == Symbol.BOOLEAN
                || lexer.token == Symbol.FLOAT || lexer.token == Symbol.STRING)
-                lexer.nextToken();
+            {
+                switch(lexer.token){
+                    case Symbol.INT:
+                        lexer.nextToken();
+                        return new NumberInt();
+                        
+                    
+                    
+                }
+                
+            }
+                
             else
                 error.signal("expected a valid type", false);
             
-            return new Type();
-            
+            return null;           
         }
         
         public NumberInterface number(){
+            int i = 2;
             
             if(lexer.token == Symbol.MINUS || lexer.token == Symbol.PLUS)
             {
                 signal();        
             }
             if(lexer.token == Symbol.NUMBERFLOAT || lexer.token == Symbol.NUMBERINT)
-                digit();           
+                digit();  
+            
+            return new NumberInt(i);
         }
         
         public Name name(){

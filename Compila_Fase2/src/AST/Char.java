@@ -9,7 +9,7 @@ package AST;
  *
  * @author maiks
  */
-public class Char implements Type {
+public class Char{
     
     private char ch;
     
