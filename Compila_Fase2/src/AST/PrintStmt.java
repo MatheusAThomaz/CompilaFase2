@@ -14,7 +14,7 @@ public class PrintStmt implements Stmt {
     
     
     private ArrayList<OrTest> orTest;
-    boolean flag = true;
+    boolean flag = false;
  
     public PrintStmt (ArrayList<OrTest> orTest){
         this.orTest = orTest;
@@ -54,5 +54,6 @@ public class PrintStmt implements Stmt {
         pw.println(");");
         
         VariablesTable.flag = false;
+        VariablesTable.string.clear();
     }
 }

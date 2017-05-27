@@ -28,14 +28,18 @@ public class Factor {
         else if(signal == '-')
             pw.print(" - ");
         
-        atom.genC(pw, flag);
+        if (factor.size() > 0){ pw.print("pow(");
+            atom.genC(pw, flag);
+            pw.print(",");
+        }
+        else atom.genC(pw, flag);
         
         while(i < factor.size())
-        {
-            pw.print(" ^ ");
+        {          
             factor.get(i).genC(pw, flag);
+            pw.print(")");
             i++;
         }
-
+        
     }
 }

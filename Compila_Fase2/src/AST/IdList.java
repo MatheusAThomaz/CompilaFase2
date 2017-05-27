@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 package AST;
+import Lexer.Symbol;
+import Principal.VariablesTable;
 import java.util.*;
 
 /**
@@ -24,12 +26,23 @@ public class IdList {
         int i = 0;
         
         variables.get(i).genC(pw);
-        i++;
+
+        int c;
         
+        c = VariablesTable.getTable(variables.get(i).getName());
+        if(c == Symbol.STRING || c == Symbol.VETORCHAR)
+            pw.print("[500]");
+
+        
+        i++;
         while(i < variables.size())
         {
             pw.print(" , ");
             variables.get(i).genC(pw);
+            
+            c = VariablesTable.getTable(variables.get(i).getName());
+            if(c == Symbol.STRING || c == Symbol.VETORCHAR)
+                pw.print("[500]");
             
             i++;
         }

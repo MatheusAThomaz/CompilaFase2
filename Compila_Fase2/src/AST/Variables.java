@@ -13,4 +13,6 @@ public interface Variables {
     
     public abstract void genC(PW pw);
     
+    public abstract String getName();
+    
 }

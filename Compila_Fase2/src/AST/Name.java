@@ -36,7 +36,7 @@ public class Name implements Variables{
                 pw.print(" %f ");
             else if(tipo == Symbol.CHAR)
                 pw.print(" %c ");
-            else if(tipo == Symbol.VETORCHAR)
+            else if(tipo == Symbol.STRING)
                 pw.print(" %s ");       
         }
         

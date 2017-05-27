@@ -18,12 +18,33 @@ public class ExprList {
         this.arrayExpr = arrayExpr;
     }
     
-    public void genC(PW pw){
+    public void genC(PW pw, boolean flag, String name){
         int i = 0;
-        while (i < arrayExpr.size()){
+
+        
+        if(flag){
+            pw.print(name+"["+i+"]" + "=");
             arrayExpr.get(i).genC(pw, false);
-            i++;           
-        }  
+            i++;
+            
+            while(i < arrayExpr.size()){
+                pw.println(";");
+                pw.print(name+"["+i+"]" + "=");
+                arrayExpr.get(i).genC(pw, false);
+                i++;
+            }
+        }
+        else
+        {
+                arrayExpr.get(i).genC(pw, false);
+                i++;
+            while (i < arrayExpr.size()){
+                 pw.print(", ");
+                arrayExpr.get(i).genC(pw, false);
+
+                i++;           
+            }  
+        }
     }
     
 }

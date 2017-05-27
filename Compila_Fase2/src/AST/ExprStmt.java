@@ -5,6 +5,9 @@
  */
 package AST;
 
+import Lexer.Symbol;
+import Principal.VariablesTable;
+
 /**
  *
  * @author matheus
@@ -15,6 +18,7 @@ public class ExprStmt implements Stmt{
     private Vetor vector;
     private OrTest orTest;
     private ExprList exprList;
+    private boolean flag;
     
     
     public ExprStmt(Name name, OrTest orTest){
@@ -23,6 +27,13 @@ public class ExprStmt implements Stmt{
         this.orTest = orTest;
         this.vector = null;
         this.exprList = null;
+    }
+    
+    public ExprStmt(Name name, ExprList exprList, boolean flag)
+    {
+     this.exprList = exprList;
+     this.name = name;
+     this.flag = flag;
     }
     
     public ExprStmt(Name name, ExprList exprList){
@@ -53,26 +64,79 @@ public class ExprStmt implements Stmt{
     
     public void genC(PW pw){
         
-        if(name == null)
-        {
-            vector.genC(pw);
-            pw.print(" = [");
-            if(exprList == null)
-                orTest.genC(pw, false);
-            else
-                exprList.genC(pw);
             
-            pw.print("]");
+        if(flag)
+        {
+            int x = VariablesTable.getTable(name.getName());
+            if(x == Symbol.VETORCHAR)
+            {
+                pw.print("strcpy("+ vector.getName());
+                pw.print(", ");
+                if(exprList == null)
+                    orTest.genC(pw, false);
+                else
+                    exprList.genC(pw, false, "");
+                pw.print(")");
+            }
+            else{
+                if(exprList == null)
+                    orTest.genC(pw, false);
+                else
+                    exprList.genC(pw, true, name.getName());
+
+        }
+        }
+        
+        else {
+            if(name == null)
+        {
+            int c = VariablesTable.getTable(vector.getName());
+            if(c == Symbol.VETORCHAR)
+            {
+                pw.print("strcpy("+ vector.getName());
+                pw.print(", ");
+                if(exprList == null)
+                    orTest.genC(pw, false);
+                else
+                    exprList.genC(pw, false, "");
+                pw.print(")");
+            }
+            else{
+                vector.genC(pw);
+                pw.print(" = [");
+                if(exprList == null)
+                    orTest.genC(pw, false);
+                else
+                    exprList.genC(pw, false, "");
+
+                pw.print("]");
+            }
+  
                 
         }
         else{
-            name.genC(pw);
-            pw.print(" = ");
-            if(exprList == null)
-                orTest.genC(pw, false);
-            else
-                exprList.genC(pw);
-            
+
+               if(VariablesTable.getTable(name.getName()) == Symbol.STRING){
+                 
+                pw.print("strcpy(");
+                name.genC(pw);
+                pw.print(", ");
+                if(exprList == null)
+                    orTest.genC(pw, true);
+                else
+                    exprList.genC(pw, false, "");
+                pw.print(")");
+            }
+            else{  
+ 
+                name.genC(pw);
+                pw.print(" = ");
+                if(exprList == null)
+                    orTest.genC(pw, false);
+                else
+                    exprList.genC(pw, false, "");
+            }
+        }
         }
         
         pw.println(";");

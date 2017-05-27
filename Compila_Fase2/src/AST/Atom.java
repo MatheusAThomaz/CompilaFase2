@@ -55,9 +55,10 @@ public class Atom {
     
     
     public void genC(PW pw, boolean flag){
+        char c = 34;
         switch (type) {
             case Symbol.VETOR:
-            if(flag)
+            if(VariablesTable.flag)
             {
                 if(vetor.getFlag())
                     VariablesTable.string.add(vetor.getName() + "[" + vetor.getString() + "]");
@@ -69,30 +70,46 @@ public class Atom {
                 vetor.genC(pw);
                 break;
             case Symbol.NUMBERINT:
-                if(flag)
+                if(VariablesTable.flag)
                     VariablesTable.string.add(Integer.toString(intValue.getInt()));
                 intValue.genC(pw);
                 break;
             case Symbol.NUMBERFLOAT:
-                if(flag)
+                if(VariablesTable.flag)
                     VariablesTable.string.add(Float.toString(floatValue.getValue()));                
                 floatValue.genC(pw);
                 break;
             case Symbol.VARSTRING:
-                if(flag)
+                if(VariablesTable.flag)
                     VariablesTable.string.add(name.getName());
                 name.genC(pw);
                 break;
             case Symbol.STRINGTEXT:
-                string.genC(pw);
+                if(flag){
+                    pw.print(c+"");
+                    string.genC(pw);
+                    pw.print(c +"");
+                }
+                else
+                    string.genC(pw);
+                
                 break;
             case Symbol.TRUE:
-                pw.print("%d");
-                VariablesTable.string.add("1");
+                if (VariablesTable.flag){ 
+                    pw.print("%d");
+                    VariablesTable.string.add("1");
+                }
+                else
+                    pw.print("1");
+                
                 break;
             case Symbol.FALSE:
-                pw.print("%d");
-                VariablesTable.string.add("0");
+                   if (VariablesTable.flag){ 
+                    pw.print("%d");
+                    VariablesTable.string.add("0");
+                }
+                else
+                    pw.print("0");
                 break;
             default:
                 break;

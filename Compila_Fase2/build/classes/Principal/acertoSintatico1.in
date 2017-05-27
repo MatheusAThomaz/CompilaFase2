@@ -1,7 +1,6 @@
-program acertoSintatico2:
+program erroSemantico2:
 
-string a[];
-
-print 'Hello, world', a;
+# Redeclaracao de variavel
+int a, a[10];
 
 end

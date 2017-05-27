@@ -299,9 +299,15 @@ public class Compiler {
             Vetor vetor = null;
             OrTest orTest = null;
             ExprList exprList = null;
-            boolean flagV = false, flagExpr = false;
+            boolean flagV = false, flagExpr = false, v = false;
             
             name = name();
+            char ch = 34;
+            int c = VariablesTable.getTable(name.getName()) ;
+            if(c == -1)
+                error.signal("variable "+ch+ name.getName() +ch+ " must be declared", false);
+            if(c == Symbol.STRING || c == Symbol.VETORFLOAT || c == Symbol.VETORINT || c == Symbol.VETORCHAR)
+                v = true;
             
             if (lexer.token == Symbol.INRANGE){
                 error.signal("'for' expected.", false);
@@ -347,6 +353,7 @@ public class Compiler {
             } 
             else error.signal("'=' expected between expressions.", false);
             
+            if(v && flagExpr) return new ExprStmt(name, exprList, v);
             if (flagV && flagExpr) return new ExprStmt(vetor, exprList);
             else if (!flagV && flagExpr) return new ExprStmt(name, exprList);
             else if (flagV && !flagExpr) return new ExprStmt(vetor, orTest);
@@ -507,8 +514,7 @@ public class Compiler {
             ArrayList<Factor> fact = new ArrayList<Factor>();
             Atom atom = null;
             char signal = ' ';
-            int i = 0;
-            
+            int i = 0;           
             int tokenAnterior;
             
             if(lexer.token == Symbol.MINUS || lexer.token == Symbol.PLUS){
@@ -518,10 +524,10 @@ public class Compiler {
             }
                 
                        
-            //tokenAnterior = lexer.token;
+           //tokenAnterior = lexer.token;
             
             atom = atom();
-
+            
             if (lexer.token == Symbol.VARSTRING || lexer.token == Symbol.NUMBERFLOAT || lexer.token == Symbol.NUMBERINT){
                 error.signal("operator expected between variables", false);
             }
@@ -580,7 +586,6 @@ public class Compiler {
             boolean flag = false;
             
             name = name();
-            
             
             if(lexer.token == Symbol.LEFTCOLCHETE)
             {
