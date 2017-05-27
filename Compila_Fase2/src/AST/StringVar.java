@@ -5,6 +5,8 @@
  */
 package AST;
 
+import Principal.VariablesTable;
+
 /**
  *
  * @author matheus
@@ -13,11 +15,16 @@ public class StringVar{
     
     private String value;
     
+    public String getValue(){
+        return this.value;
+    }
+    
     public StringVar(String value){
         this.value = value;
     }
     
     public void genC(PW pw){
-        pw.print(value);
+       
+            pw.print(value);
     }
 }

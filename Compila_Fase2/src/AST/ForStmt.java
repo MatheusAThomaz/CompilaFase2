@@ -26,6 +26,8 @@ public class ForStmt implements Stmt {
     
     public void genC(PW pw)
     {
+        int i = 0;
+        
         pw.print("for(");
         name.genC(pw);
         pw.print(" = ");
@@ -42,9 +44,18 @@ public class ForStmt implements Stmt {
         
         name.genC(pw);
         if(number1.getInt() < number2.getInt())
-            pw.print("++");
+            pw.println("++){");
         else
-            pw.print("--");
+            pw.println("--){");
+        
+        if(stmt != null)
+            while(i < stmt.size())
+            {
+                stmt.get(i).genC(pw);
+                i++;
+            }
+        
+        pw.println("}");
         
         
         

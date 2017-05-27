@@ -27,14 +27,14 @@ public class Comparison {
         this.expr2 = expr2;       
     }
     
-    public void genC(PW pw){
+    public void genC(PW pw, boolean flag){
         
-        expr1.genC(pw);
+        expr1.genC(pw, flag);
         
         if(compOp != null)
         {
             compOp.genC(pw);
-            expr2.genC(pw);
+            expr2.genC(pw, flag);
         }
         
         

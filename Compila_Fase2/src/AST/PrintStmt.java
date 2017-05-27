@@ -5,33 +5,54 @@
  */
 package AST;
 import java.util.*;
+import Principal.*;
 /**
  *
  * @author matheus
  */
 public class PrintStmt implements Stmt {
     
-    private ArrayList<OrTest> orTest;
     
+    private ArrayList<OrTest> orTest;
+    boolean flag = true;
+ 
     public PrintStmt (ArrayList<OrTest> orTest){
         this.orTest = orTest;
     }
     
     public void genC(PW pw)
     {
+        VariablesTable.flag = true;
+        char c = 34;
+        pw.print("printf(" + c);
         int i = 0;
         
-        orTest.get(i).genC(pw);
+        orTest.get(i).genC(pw, flag);
         
         i++;
         
         while(i < orTest.size())
         {
-            pw.print(",");
-            orTest.get(i).genC(pw);
+            orTest.get(i).genC(pw, flag);
             i++;
         }
         
-        pw.println(";");
+        
+        pw.print(c + "");
+        
+        if(!VariablesTable.string.isEmpty())
+        {
+            int j = 0;
+            while(j < VariablesTable.string.size())
+            {
+                pw.print(",");
+                pw.print(" " + VariablesTable.string.get(j) + " ");
+                j++;
+            }
+        }
+        
+        pw.println(");");
+        
+        VariablesTable.flag = false;
     }
 }

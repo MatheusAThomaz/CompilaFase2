@@ -20,20 +20,22 @@ public class Expr {
         this.term = term;
     }
     
-    public void genC(PW pw){
+    public void genC(PW pw, boolean flag){
         
-        int i = 0;
+        int i = 0, y = 0;
         
         if(term.size() >= 1)
-            term.get(i).genC(pw);
+            term.get(i).genC(pw, flag);
         i++;
         
         while(i < term.size())
         {
-            pw.print("" + signal[i]);
             
-            term.get(i).genC(pw);
+            pw.print("" + signal[y]);
+            
+            term.get(i).genC(pw, flag);
             i++;
+            y++;
         }
     }
     

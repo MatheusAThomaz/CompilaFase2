@@ -6,6 +6,7 @@
 package Lexer;
 import java.util.*;
 
+
 /**
  *
  * @author matheus
@@ -19,11 +20,12 @@ public class Lexer {
     private int lastTokenPos;
     private int beforeLastTokenPos;
     private char input[];
+    private float numberFloat;
     
     private String StringValue;
     
     //Vai inserir o negocio do error aqui
-    public Lexer(char input[]/*, CompilerError error*/)
+    public Lexer(char input[])
     {
         this.input = input;
         
@@ -68,7 +70,6 @@ public class Lexer {
     
     public void nextToken(){
         char c;
-        
         
         while((c = input[tokenPos]) == ' ' || c == '\r'
                 || c == '\t' || c == '\n')
@@ -127,6 +128,8 @@ public class Lexer {
                         tokenPos++;
                     }
                     
+                    numberInt = Integer.valueOf(number.toString()).intValue();
+                    
                     if (input[tokenPos] == '.'){
                         number.append(input[tokenPos]);
                         tokenPos++;
@@ -135,8 +138,8 @@ public class Lexer {
                             tokenPos++;
                         }
                         
-                        numberInt = Integer.valueOf(number.toString()).intValue();
                         
+                        numberFloat = Float.valueOf(number.toString()).floatValue();
                         
                         if (input[tokenPos] == ' ' || input[tokenPos] == '>'
                             || input[tokenPos]  == '<' || input[tokenPos]  == '='
@@ -149,7 +152,7 @@ public class Lexer {
                             token = Symbol.NUMBERFLOAT;
                         }
                         else{
-                            //ERROR - NÚMERO NÃO PODE CONTER LETRAS OU SIMBOLOS
+                            //ERRROR - VARIABLE CAN'T CONTAIN SYMBOLS
                         }
                     }
                     
@@ -287,6 +290,10 @@ public class Lexer {
     
     public int getNumber(){
         return numberInt;
+    }
+    
+    public float getNumberFloat(){
+        return numberFloat;
     }
     
     public int getLineNumber(int index){

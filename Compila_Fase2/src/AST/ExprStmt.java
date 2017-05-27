@@ -56,23 +56,26 @@ public class ExprStmt implements Stmt{
         if(name == null)
         {
             vector.genC(pw);
-            pw.print(" = ");
+            pw.print(" = [");
             if(exprList == null)
-                orTest.genC(pw);
+                orTest.genC(pw, false);
             else
                 exprList.genC(pw);
+            
+            pw.print("]");
                 
         }
         else{
             name.genC(pw);
             pw.print(" = ");
             if(exprList == null)
-                orTest.genC(pw);
+                orTest.genC(pw, false);
             else
                 exprList.genC(pw);
+            
         }
         
-        pw.print(";");
+        pw.println(";");
         
     }
 }

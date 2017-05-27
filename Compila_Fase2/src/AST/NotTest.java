@@ -19,12 +19,12 @@ public class NotTest {
         this.comparison = comparison;
     }
     
-    public void genC(PW pw){
+    public void genC(PW pw, boolean flag){
         
         if(existe_not)
             pw.print(" !");
         
-        comparison.genC(pw);
+        comparison.genC(pw, flag);
         
     }
 }

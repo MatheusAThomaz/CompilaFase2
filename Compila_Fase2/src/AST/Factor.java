@@ -21,19 +21,19 @@ public class Factor {
         this.atom = atom;
     }
     
-    public void genC(PW pw){
+    public void genC(PW pw, boolean flag){
        int i = 0;
         if(signal == '+')
             pw.print(" + ");
         else if(signal == '-')
             pw.print(" - ");
         
-        atom.genC(pw);
+        atom.genC(pw, flag);
         
         while(i < factor.size())
         {
             pw.print(" ^ ");
-            factor.get(i).genC(pw);
+            factor.get(i).genC(pw, flag);
             i++;
         }
 

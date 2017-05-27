@@ -22,6 +22,9 @@ public class Program{
  
     public void genC(PW pw){
         pw.out.println("#include <stdio.h>");
+        pw.out.println("#include <string.h>");
+        pw.out.println("#include <math.h>");
+        
         pw.println("int main(){");
         
         body.genC(pw);

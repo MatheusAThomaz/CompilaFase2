@@ -5,6 +5,9 @@
  */
 package AST;
 
+import Lexer.Symbol;
+import Principal.VariablesTable;
+
 /**
  *
  * @author matheus
@@ -23,6 +26,21 @@ public class Name implements Variables{
     
     public void genC(PW pw)
     {
-        pw.print(value);
+        if(VariablesTable.flag)
+        {
+            int tipo = VariablesTable.getTable(value);
+            
+            if(tipo == Symbol.INT || tipo == Symbol.VETORINT)
+                pw.print(" %d ");
+            else if(tipo == Symbol.FLOAT || tipo == Symbol.VETORFLOAT)
+                pw.print(" %f ");
+            else if(tipo == Symbol.CHAR)
+                pw.print(" %c ");
+            else if(tipo == Symbol.VETORCHAR)
+                pw.print(" %s ");       
+        }
+        
+        else
+            pw.print(value);
     }
 }

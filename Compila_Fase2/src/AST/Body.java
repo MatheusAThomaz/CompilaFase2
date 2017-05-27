@@ -23,7 +23,8 @@ public class Body {
     public void genC(PW pw){
         
         int  ssize = statements.size(), i = 0;
-
+        
+        if(declaration != null)
         declaration.genC( pw);
         
         

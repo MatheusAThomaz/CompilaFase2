@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package AST;
+import Principal.*;
 
 /**
  *
@@ -27,8 +28,10 @@ public class NumberInt implements NumberInterface {
     }
     
     public void genC(PW pw){
-        pw.print(" " + value);
-        
+        if(!VariablesTable.flag)
+            pw.print(" " + value);
+        else
+            pw.print(" %d ");
     }
     
 }

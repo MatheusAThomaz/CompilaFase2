@@ -21,7 +21,7 @@ public class ExprList {
     public void genC(PW pw){
         int i = 0;
         while (i < arrayExpr.size()){
-            arrayExpr.get(i).genC(pw);
+            arrayExpr.get(i).genC(pw, false);
             i++;           
         }  
     }

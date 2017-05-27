@@ -61,6 +61,10 @@ public class Symbol {
     STRINGTEXT = 45,
     CIRCUMFLEX = 46,
     VETOR = 47,
+    VETORINT = 48,
+    VETORFLOAT = 49,
+    VETORCHAR = 50,
+    CHAR = 51,
             //MUDAR ESSE 100, POR FAVOR, SENÃO É 0.
     LASTSYMBOL = 100;
 

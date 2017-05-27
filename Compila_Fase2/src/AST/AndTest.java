@@ -18,19 +18,19 @@ public class AndTest {
         this.notTest = notTest;
     }
     
-    public void genC(PW pw){
+    public void genC(PW pw, boolean flag){
         
         int i = 0;
         
         if(i < notTest.size())
-            notTest.get(i).genC(pw);
+            notTest.get(i).genC(pw,flag);
         
         i++;
         
         while(i < notTest.size())
         {
             pw.print(" && ");
-            notTest.get(i).genC(pw);
+            notTest.get(i).genC(pw, flag);
             i++;
         }
     }

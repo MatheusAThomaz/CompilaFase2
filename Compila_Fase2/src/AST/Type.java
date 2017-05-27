@@ -19,10 +19,19 @@ public class Type {
     }
     
     public void genC(PW pw){
-        
         switch (this.symb){
             case Symbol.INT:
                 pw.print("int ");
+                break;
+            case Symbol.FLOAT:
+                pw.print("float ");
+                break;
+            case Symbol.BOOLEAN:
+                pw.print("int ");
+                break;
+            case Symbol.STRING:
+                pw.print("char ");
+                break;
             
         }
         

@@ -23,9 +23,14 @@ public class IdList {
         
         int i = 0;
         
+        variables.get(i).genC(pw);
+        i++;
+        
         while(i < variables.size())
         {
+            pw.print(" , ");
             variables.get(i).genC(pw);
+            
             i++;
         }
         

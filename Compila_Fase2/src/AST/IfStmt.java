@@ -13,13 +13,13 @@ public class IfStmt implements Stmt {
     
     private OrTest orTest;
     private ArrayList<Stmt> ifStmt;
-    private ArrayList<Stmt> elseStmt;
+    private ArrayList<Stmt> elseStmt = null;
     
     public IfStmt(OrTest orTest, ArrayList<Stmt> ifStmt){
         
         this.orTest = orTest;
         this.ifStmt = ifStmt;
-        this.elseStmt = elseStmt;
+        this.elseStmt = null;
         
     }
     
@@ -35,9 +35,9 @@ public class IfStmt implements Stmt {
         int i = 0;
         pw.print("if(");
         
-        orTest.genC(pw);
+        orTest.genC(pw, false);
         
-        pw.println("{");
+        pw.println("){");
         
         while(i < ifStmt.size())
         {
@@ -46,10 +46,10 @@ public class IfStmt implements Stmt {
         }
         
         i = 0;
-        
+        pw.print("}");
         if(elseStmt != null)
         {
-            pw.println("else {");
+            pw.println("\n" + "else {");
             while(i < elseStmt.size())
             {
                 elseStmt.get(i).genC(pw);
@@ -59,7 +59,6 @@ public class IfStmt implements Stmt {
             pw.println("}");
         }
         
-        pw.println("}");
         
     }
     

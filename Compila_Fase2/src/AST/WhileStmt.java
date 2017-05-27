@@ -17,7 +17,8 @@ public class WhileStmt implements Stmt {
     
     public WhileStmt(OrTest orTest, ArrayList<Stmt> stmt)
     {
-        this.stmt =stmt;
+        this.stmt = stmt;
+        this.orTest = orTest;
     }
     
     public void genC(PW pw)
@@ -25,7 +26,7 @@ public class WhileStmt implements Stmt {
         int i = 0;
         pw.print("while(");
         
-        orTest.genC(pw);
+        orTest.genC(pw, false);
         pw.print("){");
         while(i < stmt.size())
         {

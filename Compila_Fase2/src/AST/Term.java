@@ -20,20 +20,21 @@ public class Term {
         this.factor = factor;
     }
     
-    public void genC(PW pw){
+    public void genC(PW pw, boolean flag){
         
-        int i = 0;
+        int i = 0, y = 0;
         
         if(factor.size() >= 1)
-            factor.get(i).genC(pw);
+            factor.get(i).genC(pw, flag);
         i++;
         
         while(i < factor.size())
         {
-            pw.print("" + signal[i]);
+            pw.print("" + signal[y]);
             
-            factor.get(i).genC(pw);
+            factor.get(i).genC(pw, flag);
             i++;
+            y++;
         }
     }
     

@@ -1,3 +1,5 @@
+package Principal;
+
 import Lexer.*;
 import AST.*;
 import java.util.*;
@@ -12,6 +14,7 @@ public class Compiler {
     private String programName;
     private Lexer lexer;
     private CompilerError error;
+    public Hashtable VariableTable;
     
         public Program compile(char []p_input, PrintWriter outError) {
         Program p;
@@ -197,6 +200,7 @@ public class Compiler {
         }
         
         public Stmt ifStmt(){
+            boolean flag = false;
             OrTest orTest = null;
             ArrayList<Stmt> ifStmt = new ArrayList<Stmt>();
             ArrayList<Stmt> elseStmt = new ArrayList<Stmt>();
@@ -227,6 +231,7 @@ public class Compiler {
                 else error.signal("open curly brackets expected.", true);
                 
                 if (lexer.token == Symbol.ELSE){
+                    flag = true;
                     lexer.nextToken();
                     if (lexer.token == Symbol.LEFTKEY){
                         lexer.nextToken();
@@ -247,7 +252,10 @@ public class Compiler {
                     else error.signal("open curly brackets expected.", true);
                 }
             }
-            return new IfStmt(orTest, ifStmt, elseStmt);
+            if(flag)
+                return new IfStmt(orTest, ifStmt, elseStmt);
+            else
+                return new IfStmt(orTest, ifStmt);
         }
         
         public Stmt stmt(){
@@ -373,7 +381,9 @@ public class Compiler {
         
         public ExprList exprList(){
             
-            expr();
+            ArrayList<Expr> expr = new ArrayList<Expr>();
+            
+            expr.add(expr());
             
             if (lexer.token != Symbol.COMMA && lexer.token != Symbol.RIGHTCOLCHETE){
                 error.signal("',' expected between values.", false);
@@ -381,13 +391,13 @@ public class Compiler {
             while(lexer.token == Symbol.COMMA)
             {
                 lexer.nextToken();
-                expr();
+                expr.add(expr());
                 if (lexer.token != Symbol.COMMA && lexer.token != Symbol.RIGHTCOLCHETE){
                     error.signal("',' expected between values", false);
                 }                
             }
             
-            
+            return new ExprList(expr);
         }
         
         public OrTest orTest(){
@@ -457,7 +467,7 @@ public class Compiler {
         
         public Expr expr(){
             ArrayList<Term> term = new ArrayList<Term>();
-            char []signal = null;
+            char []signal = new char[100000];
             int i = 0;
             
             term.add(term());
@@ -468,6 +478,7 @@ public class Compiler {
                 else signal[i] = '-';
                 lexer.nextToken();
                 term.add(term());
+                i++;
             }
             
             return new Expr(signal, term);
@@ -475,7 +486,7 @@ public class Compiler {
         
         public Term term(){
             ArrayList<Factor> fact = new ArrayList<Factor>();
-            char []signal = null;
+            char []signal = new char[100000];
             int i = 0;
                        
             fact.add(factor());
@@ -486,6 +497,7 @@ public class Compiler {
                 else signal[i] = '/';
                 lexer.nextToken();
                 fact.add(factor());
+                i++;
             }
             
             return new Term(signal, fact);
@@ -524,26 +536,31 @@ public class Compiler {
         }
         
         public Declaration declaration(){
-            
+           int tipo; 
            ArrayList<Type> type = new ArrayList<Type>();
            ArrayList<IdList> idList = new ArrayList<IdList>();
            
+           tipo = lexer.token;           
            boolean flag = false; 
             
            type.add(type());
-           idList.add(idList());
+           idList.add(idList(tipo));
            
            while(lexer.token == Symbol.SEMICOLON)
            {   
                lexer.nextToken();
+               
                if(lexer.token != Symbol.INT && lexer.token != Symbol.BOOLEAN
                && lexer.token != Symbol.FLOAT && lexer.token != Symbol.STRING)
                {    
+                   
                    flag = true;
                    break;
                }
-           type.add(type());
-           idList.add(idList());   
+               
+               tipo = lexer.token;
+               type.add(type());
+               idList.add(idList(tipo));   
            }
                      
            if(lexer.token == Symbol.SEMICOLON ){
@@ -554,8 +571,8 @@ public class Compiler {
            return new Declaration(type, idList);
         }
         
-        public IdList idList(){
-            
+        public IdList idList(int tipo){
+            int tipovet = 0;
             ArrayList<Variables> variables = new ArrayList<Variables>();
             Name name;
             NumberInterface number;
@@ -564,8 +581,15 @@ public class Compiler {
             
             name = name();
             
+            
             if(lexer.token == Symbol.LEFTCOLCHETE)
             {
+                if(tipo == Symbol.INT)
+                    tipovet = Symbol.VETORINT;
+                else if(tipo == Symbol.FLOAT)
+                    tipovet = Symbol.VETORFLOAT;
+                else if(tipo == Symbol.STRING)
+                    tipovet = Symbol.VETORCHAR;
                 
                 lexer.nextToken();
                 number = number();
@@ -576,14 +600,20 @@ public class Compiler {
                 flag = true;
                 
                 if(lexer.token == Symbol.RIGHTCOLCHETE)
+                {
                     lexer.nextToken();
+                    VariablesTable.insert(name.getName(),tipovet);
+                }
                 else error.signal("']' expected.", false);
+                
+                
             }
             
             if(!flag)
             {
                 variables.add(name);
-                flag = false;
+                flag = false;              
+                VariablesTable.insert(name.getName(), tipo);
             }
             
             while(lexer.token == Symbol.COMMA)
@@ -594,13 +624,25 @@ public class Compiler {
                 name = name();
                 if(lexer.token == Symbol.LEFTCOLCHETE)
                 {
+                    
+                    if(tipo == Symbol.INT)
+                        tipovet = Symbol.VETORINT;
+                    else if(tipo == Symbol.FLOAT)
+                        tipovet = Symbol.VETORFLOAT;
+                    else if(tipo == Symbol.STRING)
+                        tipovet = Symbol.VETORCHAR;
+                    
                     lexer.nextToken();
                     vetor = new Vetor(name.getName(), lexer.getNumber());
-                
+                    number();
                     variables.add(vetor);
                     flag = true;
+                    
                     if(lexer.token == Symbol.RIGHTCOLCHETE)
+                    {
                         lexer.nextToken();
+                        VariablesTable.insert(name.getName(), tipovet);
+                    }
                     else error.signal("']' expected.", false);
                 }
                 
@@ -608,6 +650,7 @@ public class Compiler {
                 {
                     variables.add(name);
                     flag = false;
+                    VariablesTable.insert(name.getName(), tipo);
                 }
             }
             
@@ -738,45 +781,63 @@ public class Compiler {
             return str;
         }
         
-        public Type type(){           
+        public Type type(){   
+            Type type = null;
             if(lexer.token == Symbol.INT || lexer.token == Symbol.BOOLEAN
                || lexer.token == Symbol.FLOAT || lexer.token == Symbol.STRING)
             {
-                switch(lexer.token){
-                    case Symbol.INT:
-                        lexer.nextToken();
-                        return new NumberInt();
-                        
-                    
-                    
-                }
-                
+                type = new Type(lexer.token);
+                lexer.nextToken();        
             }
                 
             else
                 error.signal("expected a valid type", false);
             
-            return null;           
+            return type;           
         }
         
         public NumberInterface number(){
-            int i = 2;
+            int number = 1;
             
             if(lexer.token == Symbol.MINUS || lexer.token == Symbol.PLUS)
             {
-                signal();        
+                if(lexer.token == Symbol.MINUS)
+                    number = -1;
+                else
+                    number = 1;
+                
+                signal();  
+                
+                
             }
-            if(lexer.token == Symbol.NUMBERFLOAT || lexer.token == Symbol.NUMBERINT)
-                digit();  
+            if(lexer.token == Symbol.NUMBERFLOAT || lexer.token == Symbol.NUMBERINT)      
+            {
+                if(lexer.token == Symbol.NUMBERINT)
+                {
+                    digit();
+                    return new NumberInt(lexer.getNumber()*number);
+                }
+                    
+                else
+                {
+                    digit();
+                    return new NumberFloat(lexer.getNumberFloat()*number);
+                }
+            }  
             
-            return new NumberInt(i);
+            return null;
         }
         
         public Name name(){
+            String name = null;
             if(lexer.token == Symbol.VARSTRING)
-                lexer.nextToken();
+            {
+                name = lexer.getStringValue();
+                lexer.nextToken();    
+            }
             
-            return new Name();
+            
+            return new Name(name);
         }
         
         public void digit(){
@@ -798,5 +859,9 @@ public class Compiler {
             else
                 error.signal("place a valid signal.", false);
         }
-               
+        
+        
+        
+        
+    
 }

@@ -30,7 +30,7 @@ public class Declaration {
            {
                type.get(i).genC(pw);
                idList.get(i).genC(pw);
-               pw.print(";");
+               pw.println(";");
                i++;
            }
     }

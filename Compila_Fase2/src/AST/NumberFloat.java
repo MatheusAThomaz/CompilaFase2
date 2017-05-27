@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 package AST;
-
+import Principal.*;
 /**
  *
  * @author matheus
@@ -26,7 +26,11 @@ public class NumberFloat  implements NumberInterface{
     }
     
     public void genC(PW pw){
-        pw.print("" + value);
+        
+        if(!VariablesTable.flag)
+             pw.print("" + value);
+        else
+            pw.print(" %f ");
         
     }
     

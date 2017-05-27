@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package AST;
+import Principal.*;
 
 /**
  *
@@ -21,7 +22,12 @@ public class Char{
     
     public void genC(PW pw){
         
-        pw.print("" + ch);
+        if(!VariablesTable.flag)
+            pw.print("" + ch);
+        else
+        {
+            pw.print("%c");
+        }
         
     }
     

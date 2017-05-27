@@ -18,19 +18,19 @@ public class OrTest {
         this.andTest = AndTest;
     }
     
-    public void genC(PW pw){
+    public void genC(PW pw, boolean flag){
         
         int i = 0;
         
         if(i < andTest.size())
-            andTest.get(i).genC(pw);
+            andTest.get(i).genC(pw, flag);
         
         i++;
         
         while(i < andTest.size())
         {
             pw.print(" || ");
-            andTest.get(i).genC(pw);
+            andTest.get(i).genC(pw, flag);
             i++;
         }
     }
