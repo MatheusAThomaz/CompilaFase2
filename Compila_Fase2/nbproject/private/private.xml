@@ -3,10 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/maiks/NetBeansProjects/Compila_Fase2/src/Compiler.java</file>
-            <file>file:/home/maiks/NetBeansProjects/Compila_Fase2/src/AST/Type.java</file>
-            <file>file:/home/maiks/NetBeansProjects/Compila_Fase2/src/AST/Declaration.java</file>
-            <file>file:/home/maiks/NetBeansProjects/Compila_Fase2/src/Lexer/Lexer.java</file>
+            <file>file:/home/matheus/CompilaFase2/Compila_Fase2/src/Principal/Compiler.java</file>
+            <file>file:/home/matheus/CompilaFase2/Compila_Fase2/src/Principal/acertoSintatico1.c</file>
+            <file>file:/home/matheus/CompilaFase2/Compila_Fase2/src/Principal/VariablesTable.java</file>
+            <file>file:/home/matheus/CompilaFase2/Compila_Fase2/src/Lexer/Symbol.java</file>
+            <file>file:/home/matheus/CompilaFase2/Compila_Fase2/src/Principal/acertoSintatico1.in</file>
         </group>
     </open-files>
 </project-private>

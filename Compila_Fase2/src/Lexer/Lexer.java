@@ -21,6 +21,8 @@ public class Lexer {
     private int beforeLastTokenPos;
     private char input[];
     private float numberFloat;
+    private static final int MaxValueInteger = 32768;
+    private boolean flagOutLimit = false;
     
     private String StringValue;
     
@@ -39,7 +41,7 @@ public class Lexer {
         // this.error = error;
     }
     
-    static private Hashtable keywordsTable;
+    static public Hashtable keywordsTable;
     
     static{
         keywordsTable = new Hashtable();
@@ -70,6 +72,7 @@ public class Lexer {
     
     public void nextToken(){
         char c;
+        boolean flag = false;
         
         while((c = input[tokenPos]) == ' ' || c == '\r'
                 || c == '\t' || c == '\n')
@@ -103,6 +106,20 @@ public class Lexer {
                     while (Character.isLetter(input[tokenPos]) || Character.isDigit(input[tokenPos])){
                         ident.append(input[tokenPos]);
                         tokenPos++;
+                        if (!Character.isDigit(input[tokenPos]) 
+                            && !Character.isLetter(input[tokenPos]) && input[tokenPos] != ';' 
+                            && input[tokenPos] != ','  && input[tokenPos] != ' ' 
+                            && input[tokenPos] != ':'  && input[tokenPos] != '\n'
+                            && input[tokenPos] != '\r' && input[tokenPos] != '\t'
+                            && input[tokenPos] != ','  && input[tokenPos]  != ';'
+                            && input[tokenPos] != ')'  && input[tokenPos]  != ']'
+                            && input[tokenPos] != '}'  && input[tokenPos]  != 39
+                            && input[tokenPos] != ' ' && input[tokenPos]  != '\0'
+                            && input[tokenPos] != '{' && input[tokenPos] != '('
+                            && input[tokenPos] != '['){
+                            System.out.println(input[tokenPos]);
+                            flag = true;
+                        }
                     }
                     
                     StringValue = ident.toString();
@@ -115,12 +132,14 @@ public class Lexer {
                         token = ((Integer) value).intValue();
                     }
                     
-                    if (input[tokenPos] != ' '){
-                        //ERROR - VARIAVEL NÃO PODE TER SIMBOLOS
+                    if (flag){
+                        token = Symbol.ERRORSIMBOLO;
                     }
                 }
                 
                 else if (Character.isDigit(c)){
+              
+                        
                     StringBuffer number = new StringBuffer();
                     
                     while (Character.isDigit(input[tokenPos])){
@@ -128,7 +147,19 @@ public class Lexer {
                         tokenPos++;
                     }
                     
-                    numberInt = Integer.valueOf(number.toString()).intValue();
+                    if(number.length() > 5)
+                    {
+                        token = Symbol.ERROROUTOFLIMITS;
+                        flagOutLimit = true;
+                    }
+                    else
+                        numberInt = Integer.valueOf(number.toString()).intValue(); 
+                    
+                     if ( numberInt >= MaxValueInteger )
+                     {
+                         token = Symbol.ERROROUTOFLIMITS;
+                         flagOutLimit = true;
+                     }
                     
                     if (input[tokenPos] == '.'){
                         number.append(input[tokenPos]);
@@ -137,8 +168,7 @@ public class Lexer {
                             number.append(input[tokenPos]);
                             tokenPos++;
                         }
-                        
-                        
+                                               
                         numberFloat = Float.valueOf(number.toString()).floatValue();
                         
                         if (input[tokenPos] == ' ' || input[tokenPos] == '>'
@@ -152,23 +182,23 @@ public class Lexer {
                             token = Symbol.NUMBERFLOAT;
                         }
                         else{
-                            //ERRROR - VARIABLE CAN'T CONTAIN SYMBOLS
+                            token = Symbol.ERRORNUMBERINVALID;
                         }
                     }
                     
-                    else if (input[tokenPos] == ' ' || input[tokenPos] == '>'
+                    else if ((input[tokenPos] == ' ' || input[tokenPos] == '>'
                             || input[tokenPos]  == '<' || input[tokenPos]  == '='
                             || input[tokenPos]  == ',' || input[tokenPos]  == ';'
                             || input[tokenPos]  == ')' || input[tokenPos]  == ']'
                             || input[tokenPos]  == '}' || input[tokenPos]  == 39
                             || input[tokenPos]  == '^' || input[tokenPos]  == '+'
                             || input[tokenPos]  == '-' || input[tokenPos]  == '*'
-                            || input[tokenPos]  == '/'){
+                            || input[tokenPos]  == '/') && !flagOutLimit){
                         token = Symbol.NUMBERINT;
                     }
                     
-                    else{
-                        //ERROR - NÚMERO NÃO PODE CONTER LETRAS OU SIMBOLOS
+                    else if (!flagOutLimit){
+                        token = Symbol.ERRORNUMBERINVALID;
                     }
                 }
                 
@@ -182,12 +212,13 @@ public class Lexer {
                     }
                     
                     if(input[tokenPos] == '\0')
-                        System.out.println("erro");
-                    else tokenPos++;
+                        token = Symbol.ERRORASPAS;
+                    else{ 
+                        tokenPos++;
                     
-                    StringValue = ident.toString();
-                    token = Symbol.STRINGTEXT;
-                    
+                        StringValue = ident.toString();
+                        token = Symbol.STRINGTEXT;
+                    }
                 }
                 
                 else{

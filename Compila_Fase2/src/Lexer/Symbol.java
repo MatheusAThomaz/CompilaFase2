@@ -65,6 +65,10 @@ public class Symbol {
     VETORFLOAT = 49,
     VETORCHAR = 50,
     CHAR = 51,
+    ERRORASPAS = 52,
+    ERRORSIMBOLO = 53,
+    ERROROUTOFLIMITS = 54,
+    ERRORNUMBERINVALID = 55,
             //MUDAR ESSE 100, POR FAVOR, SENÃO É 0.
     LASTSYMBOL = 100;
 
